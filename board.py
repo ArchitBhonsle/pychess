@@ -17,10 +17,28 @@ class Board:
 
     def make_move(self, move: str) -> list:
         self.move_list.append(move)
-        # ! Handle Castling, Promations and En Passants
         (ci, ri), (cf, rf) = self.get_rowcol(
             move[0:2]), self.get_rowcol(move[2:4])
-        self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
+        # ! Handle Castling and En Passants
+        if len(move) == 5:
+            # Promotions
+            self.board[ri][ci], self.board[rf][cf] = \
+                " ", \
+                move[4] if self.board[ri][ci].islower() else move[4].upper()
+        elif (move in ('e1g1', 'e1c1', 'e8g8', 'e8c8')) and \
+                (self.board[ri][ci] in ("K", "k")):
+            self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
+            if move == 'e1g1':
+                self.make_move('h1f1')
+            elif move == 'e1c1':
+                self.make_move('a1d1')
+            elif move == 'e8g8':
+                self.make_move('h8f8')
+            elif move == 'e8c8':
+                self.make_move('a8d8')
+        else:
+            # Normal moves
+            self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
         return self.move_list
 
     def actual_board(self) -> str:
@@ -36,8 +54,11 @@ class Board:
         return "\n".join(res)
 
 
-b = Board()
-print("Board: ", str(b), sep="\n")
-print("Actual Board: ", b.actual_board(), sep="\n")
-print(b.make_move('e2e4'))
-print(str(b))
+if __name__ == "__main__":
+    b = Board()
+    print("Board: ", str(b), sep="\n")
+    print("Actual Board: ", b.actual_board(), sep="\n")
+    print(b.make_move('e2e4'))
+    print(b.make_move('e7e5'))
+    print(b.make_move('g1f3'))
+    print(str(b))
