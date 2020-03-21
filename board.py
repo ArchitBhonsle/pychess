@@ -19,7 +19,7 @@ class Board:
         self.move_list.append(move)
         (ci, ri), (cf, rf) = self.get_rowcol(
             move[0:2]), self.get_rowcol(move[2:4])
-        # ! Handle Castling and En Passants
+        # ! Handle En Passants
         if len(move) == 5:
             # Promotions
             self.board[ri][ci], self.board[rf][cf] = \

@@ -26,3 +26,13 @@ class Game:
 
     def make_best_move(self):
         self.make_move(self.get_best_move())
+
+
+if __name__ == "__main__":
+    g = Game()
+    t = 50
+    while t:
+        print(50-t, g.get_best_move())
+        g.make_best_move()
+        print(str(g.board))
+        t -= 1
