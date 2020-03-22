@@ -70,6 +70,7 @@ def renderBoard():
 # Main loop
 done = False
 g = Game()
+turn = True
 clicks = []
 while not done:
     grid = g.board.get_pretty_board()
@@ -77,11 +78,19 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        elif event.type == pygame.MOUSEBUTTONDOWN and turn:
             pos = pygame.mouse.get_pos()
             col = pos[0] // (GRID_WIDTH + MARGIN)
             row = pos[1] // (GRID_HEIGHT + MARGIN)
             clicks.append(getBoardString(row, col))
+
+    if not turn:
+        g.make_best_move()
+        print(g.board.move_list)
+        if not g.get_best_move():
+            # Handle checkmate
+            print("Checkmate")
+        turn = True
 
     if len(clicks) >= 2:
         print(clicks)
@@ -90,6 +99,7 @@ while not done:
             if not g.get_best_move():
                 # Handle checkmate
                 print("Checkmate")
+            turn = False
         clicks = []
 
     screen.fill(BLACK)

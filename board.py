@@ -20,29 +20,33 @@ class Board:
         (ci, ri), (cf, rf) = self.get_rowcol(
             move[0:2]), self.get_rowcol(move[2:4])
 
+        # Promotions
         if len(move) == 5:
-            # Promotions
             self.board[ri][ci], self.board[rf][cf] = \
                 " ", \
                 move[4] if self.board[ri][ci].islower() else move[4].upper()
+        # Castling
         elif (move in ('e1g1', 'e1c1', 'e8g8', 'e8c8')) and \
                 (self.board[ri][ci] in ("K", "k")):
-            # Castling
             self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
             if move == 'e1g1':
                 self.make_move('h1f1')
+                self.move_list.pop()
             elif move == 'e1c1':
                 self.make_move('a1d1')
+                self.move_list.pop()
             elif move == 'e8g8':
                 self.make_move('h8f8')
+                self.move_list.pop()
             elif move == 'e8c8':
                 self.make_move('a8d8')
+                self.move_list.pop()
+        # En Passant
         elif (self.board[ri][ci] in ("p", "P") and (ci != cf) and (self.board[rf][cf] == " ")):
-            # En Passant
             self.board[ri][cf] = " "
             self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
+        # Normal moves
         else:
-            # Normal moves
             self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
 
         return self.move_list
