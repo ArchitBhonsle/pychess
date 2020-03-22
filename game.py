@@ -17,12 +17,13 @@ class Game:
     def is_move_correct(self, move: str) -> bool:
         return self.engine.is_move_correct(move)
 
-    def make_move(self, move):
+    def make_move(self, move) -> bool:
         if self.is_move_correct(move):
             self.board.make_move(move)
             self.sync_engine()
+            return True
         else:
-            print("Invalid move")
+            return False
 
     def make_best_move(self):
         self.make_move(self.get_best_move())

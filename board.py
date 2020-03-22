@@ -19,7 +19,7 @@ class Board:
         self.move_list.append(move)
         (ci, ri), (cf, rf) = self.get_rowcol(
             move[0:2]), self.get_rowcol(move[2:4])
-        # ! Handle En Passants
+
         if len(move) == 5:
             # Promotions
             self.board[ri][ci], self.board[rf][cf] = \
@@ -27,6 +27,7 @@ class Board:
                 move[4] if self.board[ri][ci].islower() else move[4].upper()
         elif (move in ('e1g1', 'e1c1', 'e8g8', 'e8c8')) and \
                 (self.board[ri][ci] in ("K", "k")):
+            # Castling
             self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
             if move == 'e1g1':
                 self.make_move('h1f1')
@@ -36,9 +37,14 @@ class Board:
                 self.make_move('h8f8')
             elif move == 'e8c8':
                 self.make_move('a8d8')
+        elif (self.board[ri][ci] in ("p", "P") and (ci != cf) and (self.board[rf][cf] == " ")):
+            # En Passant
+            self.board[ri][cf] = " "
+            self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
         else:
             # Normal moves
             self.board[ri][ci], self.board[rf][cf] = " ", self.board[ri][ci]
+
         return self.move_list
 
     def actual_board(self) -> str:
@@ -46,6 +52,12 @@ class Board:
         for i in range(8):
             res.append(" ".join(self.board[i]))
         return "\n".join(res)
+
+    def get_pretty_board(self) -> list:
+        res = []
+        for i in range(7, -1, -1):
+            res.append(self.board[i])
+        return res
 
     def __str__(self) -> str:
         res = []
