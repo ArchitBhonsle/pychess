@@ -5,7 +5,8 @@ from board import Board
 class Game:
 
     def __init__(self):
-        self.engine = Stockfish(path='stockfish')
+        # self.engine = Stockfish(path='C:\\User\\ADMIN\\AppData\\Local\\Programs\\Python\\Python38-32\\Lib\\site-packages\\stockfish')
+        self.engine = Stockfish()
         self.board = Board()
 
     def sync_engine(self):
