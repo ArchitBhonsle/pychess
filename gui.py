@@ -67,8 +67,9 @@ def renderBoard():
             except KeyError:
                 pass
 
-winner = 0
 # Main loop
+winner = 0
+checkmate = False
 done = False
 g = Game()
 turn = True
@@ -93,6 +94,7 @@ while not done:
             # player lose
             print("Checkmate")
             winner = 2
+            checkmate = True
             done = True
         turn = True
 
@@ -104,6 +106,7 @@ while not done:
                 # Handle checkmate
                 print("Checkmate")
                 winner = 1
+                checkmate = True
                 done = True
             turn = False
         clicks = []
@@ -115,24 +118,21 @@ while not done:
     clock.tick(60)
     pygame.display.flip()
 
-
-# pygame.draw.rect(screen, WHITE, [50, 160, 380, 160])
-font = pygame.font.Font('OpenSans-Regular.ttf', 32)
-if winner == 1 :
-    text = font.render('Checkmate. You Win', 0, BLACK, WHITE)
-    textRect = text.get_rect()
-    textRect.center = (240, 240)
-    screen.blit(text, textRect)
-    # pass
-else :
-    text = font.render('Checkmate. You Lose', 0, BLACK, WHITE)
-    textRect = text.get_rect()
-    textRect.center = (240, 240)
-    screen.blit(text, textRect)
-    # pass
-time.sleep(0.5)
-pygame.display.flip()
-pygame.display.update()
-time.sleep(5)
+if checkmate :
+    font = pygame.font.Font('OpenSans-Regular.ttf', 32)
+    if winner == 1 :
+        text = font.render('Checkmate. You Win', 0, BLACK, WHITE)
+        textRect = text.get_rect()
+        textRect.center = (240, 240)
+        screen.blit(text, textRect)
+    else :
+        text = font.render('Checkmate. You Lose', 0, BLACK, WHITE)
+        textRect = text.get_rect()
+        textRect.center = (240, 240)
+        screen.blit(text, textRect)
+    time.sleep(0.5)
+    pygame.display.flip()
+    pygame.display.update()
+    time.sleep(5)
 
 pygame.quit()
