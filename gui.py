@@ -1,4 +1,5 @@
 import pygame
+import time
 from game import Game
 
 GRID_WIDTH, GRID_HEIGHT, MARGIN = 60, 60, 0
@@ -66,7 +67,7 @@ def renderBoard():
             except KeyError:
                 pass
 
-
+winner = 0
 # Main loop
 done = False
 g = Game()
@@ -89,7 +90,10 @@ while not done:
         print(g.board.move_list)
         if not g.get_best_move():
             # Handle checkmate
+            # player lose
             print("Checkmate")
+            winner = 2
+            done = True
         turn = True
 
     if len(clicks) >= 2:
@@ -99,6 +103,8 @@ while not done:
             if not g.get_best_move():
                 # Handle checkmate
                 print("Checkmate")
+                winner = 1
+                done = True
             turn = False
         clicks = []
 
@@ -108,5 +114,25 @@ while not done:
 
     clock.tick(60)
     pygame.display.flip()
+
+
+# pygame.draw.rect(screen, WHITE, [50, 160, 380, 160])
+font = pygame.font.Font('OpenSans-Regular.ttf', 32)
+if winner == 1 :
+    text = font.render('Checkmate. You Win', 0, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (240, 240)
+    screen.blit(text, textRect)
+    # pass
+else :
+    text = font.render('Checkmate. You Lose', 0, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (240, 240)
+    screen.blit(text, textRect)
+    # pass
+time.sleep(0.5)
+pygame.display.flip()
+pygame.display.update()
+time.sleep(5)
 
 pygame.quit()
