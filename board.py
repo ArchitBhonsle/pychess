@@ -51,11 +51,17 @@ class Board:
 
         return self.move_list
 
-    def actual_board(self) -> str:
+    def get_actual_board(self) -> str:
         res = []
         for i in range(8):
-            res.append(" ".join(self.board[i]))
-        return "\n".join(res)
+            res.append(self.board[i])
+        return res
+
+    def get_actual_board_black(self) -> str:
+        res = []
+        for i in range(8):
+            res.append(self.board[i][::-1])
+        return res
 
     def get_pretty_board(self) -> list:
         res = []
@@ -73,7 +79,7 @@ class Board:
 if __name__ == "__main__":
     b = Board()
     print("Board: ", str(b), sep="\n")
-    print("Actual Board: ", b.actual_board(), sep="\n")
+    print("Actual Board: ", b.get_actual_board(), sep="\n")
     print(b.make_move('e2e4'))
     print(b.make_move('e7e5'))
     print(b.make_move('g1f3'))

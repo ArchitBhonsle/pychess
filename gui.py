@@ -42,10 +42,23 @@ def getBoardString(row, col):
     return clicked
 
 
+def getBoardStringBlack(row, col):
+    clicked = ""
+    clicked += str(boardColList[::-1][col])
+    clicked += str(row+1)
+    return clicked
+
+
 def getBoardCoordinates(boardString):
     col = boardString[0]
     row = int(boardString[1])
     return (boardColList.index(col), 8-row)
+
+
+def getBoardCoordinatesBlack(boardString):
+    col = boardString[0]
+    row = int(boardString[1])
+    return (boardColList[::-1].index(col), row+1)
 
 
 def renderPieceOnCoordinates(row, col):
@@ -67,8 +80,23 @@ def renderBoard():
             except KeyError:
                 pass
 
-MODE = False # True means two player mode and False means one player
-PLAYER = False or MODE # True means white and False means black
+
+def renderBoardBlack():
+    for row in range(8):
+        for col in range(8):
+            color = GREEN
+            if((row+col) % 2 == 1):
+                color = YELLOW
+            pygame.draw.rect(screen, color, [
+                             (MARGIN + GRID_WIDTH) * col+MARGIN, (MARGIN + GRID_HEIGHT)*row+MARGIN, GRID_WIDTH, GRID_HEIGHT])
+            try:
+                renderPieceOnCoordinates(row, col)
+            except KeyError:
+                pass
+
+
+MODE = True  # True means two player mode and False means one player
+PLAYER = True or MODE  # True means white and False means black
 
 # Main loop
 g = Game()
@@ -77,8 +105,7 @@ done, checkmate = False, False
 clicks = []
 
 while not done:
-    grid = g.board.get_pretty_board()
-
+    grid = g.board.get_pretty_board() if PLAYER else g.board.get_actual_board_black()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -86,19 +113,29 @@ while not done:
             pos = pygame.mouse.get_pos()
             col = pos[0] // (GRID_WIDTH + MARGIN)
             row = pos[1] // (GRID_HEIGHT + MARGIN)
-            clicks.append(getBoardString(row, col))
+            clicks.append(getBoardString(row, col)
+                          if PLAYER else getBoardStringBlack(row, col))
 
     if not turn:
         g.make_best_move()
         print(str(g.board))
+        print(g.board.move_list)
         if not g.get_best_move():
             print("Checkmate")
             checkmate, done = True, True
         turn = True
 
     if len(clicks) >= 2:
+        (ci, ri), (cf, rf) = g.board.get_rowcol(
+            clicks[0]),  g.board.get_rowcol(clicks[1])
+        if (ri == 6 and rf == 7 and g.board.board[ri][ci] == 'P') or \
+                (ri == 1 and rf == 0 and g.board.board[ri][ci] == 'p'):
+            promotedTo = 'q'  # Handle promotion here
+            clicks.append(promotedTo)
+
         if g.make_move("".join(clicks)):
             print(str(g.board))
+            print(g.board.move_list)
             if not g.get_best_move():
                 print("Checkmate")
                 checkmate, done = True, True
@@ -107,12 +144,12 @@ while not done:
 
     screen.fill(BLACK)
 
-    renderBoard()
+    renderBoard() if PLAYER else renderBoardBlack()
 
     clock.tick(60)
     pygame.display.flip()
 
-if checkmate :
+if checkmate:
     font = pygame.font.Font('OpenSans-Regular.ttf', 32)
     text = font.render('Checkmate', 0, WHITE, BLACK)
     textRect = text.get_rect()
