@@ -67,16 +67,18 @@ def renderBoard():
             except KeyError:
                 pass
 
+MODE = False # True means two player mode and False means one player
+PLAYER = False or MODE # True means white and False means black
+
 # Main loop
-winner = 0
-checkmate = False
-done = False
 g = Game()
-turn = True
+turn = PLAYER
+done, checkmate = False, False
 clicks = []
+
 while not done:
     grid = g.board.get_pretty_board()
-    # print(str(g.board))
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -88,27 +90,19 @@ while not done:
 
     if not turn:
         g.make_best_move()
-        print(g.board.move_list)
+        print(str(g.board))
         if not g.get_best_move():
-            # Handle checkmate
-            # player lose
             print("Checkmate")
-            winner = 2
-            checkmate = True
-            done = True
+            checkmate, done = True, True
         turn = True
 
     if len(clicks) >= 2:
-        print(clicks)
         if g.make_move("".join(clicks)):
             print(str(g.board))
             if not g.get_best_move():
-                # Handle checkmate
                 print("Checkmate")
-                winner = 1
-                checkmate = True
-                done = True
-            turn = False
+                checkmate, done = True, True
+            turn = MODE
         clicks = []
 
     screen.fill(BLACK)
@@ -120,19 +114,13 @@ while not done:
 
 if checkmate :
     font = pygame.font.Font('OpenSans-Regular.ttf', 32)
-    if winner == 1 :
-        text = font.render('Checkmate. You Win', 0, BLACK, WHITE)
-        textRect = text.get_rect()
-        textRect.center = (240, 240)
-        screen.blit(text, textRect)
-    else :
-        text = font.render('Checkmate. You Lose', 0, BLACK, WHITE)
-        textRect = text.get_rect()
-        textRect.center = (240, 240)
-        screen.blit(text, textRect)
+    text = font.render('Checkmate', 0, WHITE, BLACK)
+    textRect = text.get_rect()
+    textRect.center = (240, 240)
+    screen.blit(text, textRect)
     time.sleep(0.5)
     pygame.display.flip()
     pygame.display.update()
-    time.sleep(5)
+    time.sleep(2)
 
 pygame.quit()
